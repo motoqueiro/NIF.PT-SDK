@@ -1,8 +1,9 @@
-﻿namespace NIF.PT.Client.Entities
+﻿namespace NIF.PT.Client.Responses
 {
     using Newtonsoft.Json;
+    using NIF.PT.Client.Entities;
 
-    public partial class Welcome
+    public partial class SearchResponse
     {
         [JsonProperty("result")]
         public string Result { get; set; }

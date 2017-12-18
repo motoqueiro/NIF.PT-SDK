@@ -5,18 +5,18 @@
     public class CreditVerification
     {
         [JsonProperty("month")]
-        public long Month { get; set; }
+        public int Month { get; set; }
 
         [JsonProperty("day")]
-        public long Day { get; set; }
+        public int Day { get; set; }
 
         [JsonProperty("hour")]
-        public long Hour { get; set; }
+        public int Hour { get; set; }
 
         [JsonProperty("minute")]
-        public long Minute { get; set; }
+        public int Minute { get; set; }
 
         [JsonProperty("paid")]
-        public long Paid { get; set; }
+        public int Paid { get; set; }
     }
 }

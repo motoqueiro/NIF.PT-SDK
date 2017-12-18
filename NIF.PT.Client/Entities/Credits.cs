@@ -2,7 +2,7 @@
 {
     using Newtonsoft.Json;
 
-    public partial class Credits
+    public class Credits
     {
         [JsonProperty("used")]
         public string Used { get; set; }

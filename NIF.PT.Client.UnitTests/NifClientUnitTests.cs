@@ -58,8 +58,7 @@
             //Arrange
             var client = GenerateClient(out string key);
             var nif = "509442013";
-            var jsonBody = await LoadResponseBody("SearchResponseBody");
-            this._httpTest.RespondWith(jsonBody);
+            await LoadResponseBody("SearchResponseBody");
 
             //Act
             var result = await client.Search(nif);
@@ -68,7 +67,6 @@
             result.Should().NotBeNull();
             this._httpTest.ShouldHaveCalled(NifClient.BaseAddress)
                 .WithVerb(HttpMethod.Get)
-                .WithContentType("application/json")
                 .WithQueryParamValue("json", 1)
                 .WithQueryParamValue("q", nif)
                 .WithQueryParamValue("key", key);
@@ -83,8 +81,7 @@
             var creditsAmount = this._fixture.Generate<int>();
             var invoiceName = this._fixture.Generate<string>();
             var invoiceNif = this._fixture.Generate<string>();
-            var responseBody = await LoadResponseBody("BuyCreditsResponseBody");
-            this._httpTest.RespondWith(responseBody);
+            await LoadResponseBody("BuyCreditsResponseBody");
 
             //Act
             var result = await client.BuyCredits(
@@ -94,9 +91,12 @@
 
             //Assert
             result.Should().NotBeNull();
+            result.Credits.Should().Equals(1000);
+            result.AtmReference.Entity.Equals("10241");
+            result.AtmReference.Reference.Equals("000 000 000");
+            result.AtmReference.Amount.Equals("10.00");
             this._httpTest.ShouldHaveCalled(NifClient.BaseAddress)
                 .WithVerb(HttpMethod.Get)
-                .WithContentType("application/json")
                 .WithQueryParamValue("json", 1)
                 .WithQueryParamValue("buy", creditsAmount)
                 .WithQueryParamValue("invoice_name", invoiceName)
@@ -111,17 +111,19 @@
             //Arrange
             var client = GenerateClient(out string key);
             var creditsAmount = this._fixture.Generate<int>();
-            var responseBody = await LoadResponseBody("BuyCreditsResponseBody");
-            this._httpTest.RespondWith(responseBody);
+            await LoadResponseBody("BuyCreditsResponseBody");
 
             //Act
             var result = await client.BuyCredits(creditsAmount);
 
             //Assert
             result.Should().NotBeNull();
+            result.Credits.Should().Equals(1000);
+            result.AtmReference.Entity.Equals("10241");
+            result.AtmReference.Reference.Equals("000 000 000");
+            result.AtmReference.Amount.Equals("10.00");
             this._httpTest.ShouldHaveCalled(NifClient.BaseAddress)
                 .WithVerb(HttpMethod.Get)
-                .WithContentType("application/json")
                 .WithQueryParamValue("json", 1)
                 .WithQueryParamValue("buy", creditsAmount)
                 .WithQueryParamValue("key", key);
@@ -133,14 +135,24 @@
         {
             //Arrange
             var client = GenerateClient(out string key);
-            var responseBody = await this.LoadResponseBody("ConsultCreditsResponseBody");
-            this._httpTest.RespondWith(responseBody);
+            await this.LoadResponseBody("ConsultCreditsResponseBody");
 
             //Act
             var result = await client.VerifyCredits();
 
             //Assert
             result.Should().NotBeNull();
+            result.Credits.Should().NotBeNull();
+            result.Credits.Month.Should().Equals(1000);
+            result.Credits.Day.Should().Equals(100);
+            result.Credits.Hour.Should().Equals(10);
+            result.Credits.Minute.Should().Equals(1);
+            result.Credits.Paid.Should().Equals(0);
+            this._httpTest.ShouldHaveCalled(NifClient.BaseAddress)
+                .WithVerb(HttpMethod.Get)
+                .WithQueryParamValue("json", 1)
+                .WithQueryParamValue("credits", 1)
+                .WithQueryParamValue("key", key);
         }
 
         public void Dispose()
@@ -154,11 +166,12 @@
             return new NifClient(key);
         }
 
-        private async Task<string> LoadResponseBody(string fileName)
+        private async Task LoadResponseBody(string fileName)
         {
             var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             var filePath = Path.Combine(directory, "ResponseBodies", fileName + ".json");
-            return await File.ReadAllTextAsync(filePath);
+            var responseBody = await File.ReadAllTextAsync(filePath);
+            this._httpTest.RespondWith(responseBody);
         }
     }
 }

@@ -4,7 +4,7 @@
     using System.Threading.Tasks;
     using Flurl;
     using Flurl.Http;
-    using NIF.PT.Client.Entities;
+    using NIF.PT.Client.Responses;
 
     public class NifClient
     {
@@ -13,7 +13,7 @@
         public string Key { get; private set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         public NifClient(string key)
@@ -27,17 +27,17 @@
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="nif"></param>
         /// <returns></returns>
-        public async Task<Welcome> Search(string nif)
+        public async Task<SearchResponse> Search(string nif)
         {
             return await BaseAddress
                 .SetQueryParam("json", 1)
                 .SetQueryParam("q", nif)
                 .SetQueryParam("key", this.Key)
-                .GetJsonAsync<Welcome>();
+                .GetJsonAsync<SearchResponse>();
         }
 
         /// <summary>
@@ -47,7 +47,7 @@
         /// <param name="invoiceName"></param>
         /// <param name="invoiceNif"></param>
         /// <returns></returns>
-        public async Task<CreditPurchase> BuyCredits(
+        public async Task<CreditPurchaseResponse> BuyCredits(
             int creditsAmount,
             string invoiceName = null,
             string invoiceNif = null)
@@ -66,20 +66,20 @@
                 url.SetQueryParam("invoice_nif", invoiceNif);
             }
 
-            return await url.GetJsonAsync<CreditPurchase>();
+            return await url.GetJsonAsync<CreditPurchaseResponse>();
         }
 
         /// <summary>
         /// Para saber quantos créditos já gastou, sejam eles gratuitos ou pagos.
         /// </summary>
         /// <returns></returns>
-        public async Task<CreditVerification> VerifyCredits()
+        public async Task<CreditVerificationResponse> VerifyCredits()
         {
             return await BaseAddress
                 .SetQueryParam("json", 1)
                 .SetQueryParam("credits", 1)
                 .SetQueryParam("key", this.Key)
-                .GetJsonAsync<CreditVerification>();
+                .GetJsonAsync<CreditVerificationResponse>();
         }
     }
 }
