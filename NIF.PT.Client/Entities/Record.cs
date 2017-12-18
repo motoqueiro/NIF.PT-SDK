@@ -2,7 +2,7 @@
 {
     using Newtonsoft.Json;
 
-    public partial class The509442013
+    public partial class Record
     {
         [JsonProperty("nif")]
         public long Nif { get; set; }

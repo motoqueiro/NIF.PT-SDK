@@ -1,0 +1,63 @@
+#---------------------------------#
+#      general configuration      #
+#---------------------------------#
+
+# version format
+version: 1.0.{build}
+
+#---------------------------------#
+#    environment configuration    #
+#---------------------------------#
+
+# Build worker image (VM template)
+image: Visual Studio 2017
+
+# environment variables
+environment:
+  NIFPT_KEY:
+    secure: null
+  NIFPT_CREDIT_PRICE: 0.01
+  NIFPT_ENTITY: 10241
+
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
+
+# enable patching of AssemblyInfo.* files
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_version: "2.2.{build}"
+  assembly_file_version: "{version}"
+  assembly_informational_version: "{version}"
+
+# Automatically register private account and/or project AppVeyor NuGet feeds.
+nuget:
+  account_feed: true
+  project_feed: true
+  disable_publish_on_pr: true     # disable publishing of .nupkg artifacts to
+                                  # account/project feeds for pull request builds
+build:
+  publish_nuget: true             # package projects with .nuspec files and push to artifacts
+  publish_nuget_symbols: true     # generate and publish NuGet symbol packages
+  include_nuget_references: true  # add -IncludeReferencedProjects option while packaging NuGet artifacts
+  verbosity: minimal
+
+#---------------------------------#
+#         notifications           #
+#---------------------------------#
+
+notifications:
+- provider: Email
+  to:
+    - monteirotiago27@gmail.com
+  subject: Build {{status}}
+  message: '{{message}}, {{commitId}}'
+  on_build_success: true
+  on_build_failure: true
+  on_build_status_changed: true

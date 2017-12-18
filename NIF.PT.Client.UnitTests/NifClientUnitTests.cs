@@ -9,6 +9,7 @@
     using SimpleFixture;
     using Xunit;
 
+    [Trait("Category", "Unit Tests")]
     public class NifClientUnitTests
         : IDisposable
     {
@@ -65,6 +66,13 @@
 
             //Assert
             result.Should().NotBeNull();
+            result.Result.Should().Equals("success");
+            result.Records.Should().NotBeNull();
+            result.NifValidation.Should().Equals(true);
+            result.IsNif.Should().Equals(true);
+            result.Credits.Should().NotBeNull();
+            result.Credits.Used.Should().Equals("free");
+            result.Credits.Left.Should().BeEmpty();
             this._httpTest.ShouldHaveCalled(NifClient.BaseAddress)
                 .WithVerb(HttpMethod.Get)
                 .WithQueryParamValue("json", 1)

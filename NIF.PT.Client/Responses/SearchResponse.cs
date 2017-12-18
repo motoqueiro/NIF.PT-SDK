@@ -1,5 +1,6 @@
 ﻿namespace NIF.PT.Client.Responses
 {
+    using System.Collections.Generic;
     using Newtonsoft.Json;
     using NIF.PT.Client.Entities;
 
@@ -9,7 +10,7 @@
         public string Result { get; set; }
 
         [JsonProperty("records")]
-        public Records Records { get; set; }
+        public IEnumerable<Record> Records { get; set; }
 
         [JsonProperty("nif_validation")]
         public bool NifValidation { get; set; }
