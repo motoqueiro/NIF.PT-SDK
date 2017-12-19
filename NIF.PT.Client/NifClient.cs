@@ -4,13 +4,27 @@
     using System.Threading.Tasks;
     using Flurl;
     using Flurl.Http;
-    using NIF.PT.Client.Responses;
+    using Flurl.Http.Configuration;
+    using Newtonsoft.Json;
+    using NIF.PT.Client.Converters;
+    using NIF.PT.Client.Entities;
 
     public class NifClient
     {
         public const string BaseAddress = "http://www.nif.pt";
 
         public string Key { get; private set; }
+
+        static NifClient()
+        {
+            FlurlHttp.Configure(gfhs =>
+            {
+                var settings = new JsonSerializerSettings();
+                settings.Converters.Add(new RecordJsonConverter());
+                settings.Converters.Add(new CreditVerificationJsonConverter());
+                gfhs.JsonSerializer = new NewtonsoftJsonSerializer(settings);
+            });
+        }
 
         /// <summary>
         ///
@@ -31,13 +45,13 @@
         /// </summary>
         /// <param name="nif"></param>
         /// <returns></returns>
-        public async Task<SearchResponse> Search(string nif)
+        public async Task<Search> Search(string nif)
         {
             return await BaseAddress
                 .SetQueryParam("json", 1)
                 .SetQueryParam("q", nif)
                 .SetQueryParam("key", this.Key)
-                .GetJsonAsync<SearchResponse>();
+                .GetJsonAsync<Search>();
         }
 
         /// <summary>
@@ -47,7 +61,7 @@
         /// <param name="invoiceName"></param>
         /// <param name="invoiceNif"></param>
         /// <returns></returns>
-        public async Task<CreditPurchaseResponse> BuyCredits(
+        public async Task<CreditPurchase> BuyCredits(
             int creditsAmount,
             string invoiceName = null,
             string invoiceNif = null)
@@ -66,20 +80,20 @@
                 url.SetQueryParam("invoice_nif", invoiceNif);
             }
 
-            return await url.GetJsonAsync<CreditPurchaseResponse>();
+            return await url.GetJsonAsync<CreditPurchase>();
         }
 
         /// <summary>
         /// Para saber quantos créditos já gastou, sejam eles gratuitos ou pagos.
         /// </summary>
         /// <returns></returns>
-        public async Task<CreditVerificationResponse> VerifyCredits()
+        public async Task<CreditVerification> VerifyCredits()
         {
             return await BaseAddress
                 .SetQueryParam("json", 1)
                 .SetQueryParam("credits", 1)
                 .SetQueryParam("key", this.Key)
-                .GetJsonAsync<CreditVerificationResponse>();
+                .GetJsonAsync<CreditVerification>();
         }
     }
 }

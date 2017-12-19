@@ -18,7 +18,7 @@
                     var launchSettingsObject = JObject.Load(reader);
                     var environmentVariables = launchSettingsObject
                         .SelectToken("$..environmentVariables")
-                        .Select(t => t.Children<JProperty>());
+                        .SelectMany(t => t.Children<JProperty>());
 
                     foreach (var variable in environmentVariables)
                     {

@@ -1,16 +1,15 @@
-﻿namespace NIF.PT.Client.Responses
+﻿namespace NIF.PT.Client.Entities
 {
-    using System.Collections.Generic;
     using Newtonsoft.Json;
-    using NIF.PT.Client.Entities;
+    using NIF.PT.Client.Converters;
 
-    public partial class SearchResponse
+    public partial class Search
     {
         [JsonProperty("result")]
         public string Result { get; set; }
 
-        [JsonProperty("records")]
-        public IEnumerable<Record> Records { get; set; }
+        [JsonProperty("records"), JsonConverter(typeof(RecordJsonConverter))]
+        public Record Record { get; set; }
 
         [JsonProperty("nif_validation")]
         public bool NifValidation { get; set; }

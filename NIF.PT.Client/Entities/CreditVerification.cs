@@ -1,7 +1,9 @@
 ﻿namespace NIF.PT.Client.Entities
 {
     using Newtonsoft.Json;
+    using NIF.PT.Client.Converters;
 
+    [JsonConverter(typeof(CreditVerificationJsonConverter))]
     public class CreditVerification
     {
         [JsonProperty("month")]

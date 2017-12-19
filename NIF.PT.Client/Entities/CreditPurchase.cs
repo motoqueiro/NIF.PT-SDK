@@ -1,9 +1,8 @@
-﻿namespace NIF.PT.Client.Responses
+﻿namespace NIF.PT.Client.Entities
 {
     using Newtonsoft.Json;
-    using NIF.PT.Client.Entities;
 
-    public class CreditPurchaseResponse
+    public class CreditPurchase
     {
         [JsonProperty("credits")]
         public int Credits { get; set; }

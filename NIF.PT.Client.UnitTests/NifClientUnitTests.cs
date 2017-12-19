@@ -67,7 +67,38 @@
             //Assert
             result.Should().NotBeNull();
             result.Result.Should().Equals("success");
-            result.Records.Should().NotBeNull();
+            result.Record.Should().NotBeNull();
+            result.Record.Nif.Should().Equals(509442013);
+            result.Record.SeoUrl.Should().Equals("nexperience-lda");
+            result.Record.Title.Should().Equals("Nexperience Lda");
+            result.Record.Address.Should().Equals("Rua da Lionesa Nº 446, Edifício G20");
+            result.Record.Pc4.Should().Equals("4465");
+            result.Record.Pc3.Should().Equals("671");
+            result.Record.City.Should().Equals("Leça do Balio");
+            result.Record.Activity.Should().Equals("Desenvolvimento de software. Consultoria em informática. Comércio de equipamentos e sistemas informáticos. Exploração de portais web.");
+            result.Record.Status.Should().Equals("active");
+            result.Record.Cae.Should().Equals("62010");
+            result.Record.Contacts.Should().NotBeNull();
+            result.Record.Contacts.Email.Should().Equals("info@nex.pt");
+            result.Record.Contacts.Phone.Should().Equals("220198228");
+            result.Record.Contacts.Website.Should().Equals("www.nex.pt");
+            result.Record.Contacts.Fax.Should().Equals("224 905 459");
+            result.Record.Structure.Should().NotBeNull();
+            result.Record.Structure.Nature.Should().Equals("LDA");
+            result.Record.Structure.Capital.Should().Equals("5000.00");
+            result.Record.Structure.CapitalCurrency.Should().Equals("EUR");
+            result.Record.Geo.Should().NotBeNull();
+            result.Record.Geo.Region.Should().Equals("Porto");
+            result.Record.Geo.County.Should().Equals("Matosinhos");
+            result.Record.Geo.Parish.Should().Equals("Leça do Balio");
+            result.Record.Place.Should().NotBeNull();
+            result.Record.Place.Address.Should().Equals("Rua da Lionesa Nº 446, Edifício G20");
+            result.Record.Place.Pc4.Should().Equals("4465");
+            result.Record.Place.Pc3.Should().Equals("671");
+            result.Record.Place.City.Should().Equals("Leça do Balio");
+            result.Record.Racius.Should().Equals("http://www.racius.com/nexperience-lda/");
+            result.Record.Alias.Should().Equals("Nex - Nexperience, Lda");
+            result.Record.Portugalio.Should().Equals("http://www.portugalio.com/nex/");
             result.NifValidation.Should().Equals(true);
             result.IsNif.Should().Equals(true);
             result.Credits.Should().NotBeNull();
@@ -138,7 +169,7 @@
         }
 
         [Fact]
-        [Trait("Category", "Search")]
+        [Trait("Category", "Verify Credits")]
         public async Task VerifyCredits_ShouldReturnInfo()
         {
             //Arrange
@@ -150,12 +181,11 @@
 
             //Assert
             result.Should().NotBeNull();
-            result.Credits.Should().NotBeNull();
-            result.Credits.Month.Should().Equals(1000);
-            result.Credits.Day.Should().Equals(100);
-            result.Credits.Hour.Should().Equals(10);
-            result.Credits.Minute.Should().Equals(1);
-            result.Credits.Paid.Should().Equals(0);
+            result.Month.Should().Equals(1000);
+            result.Day.Should().Equals(100);
+            result.Hour.Should().Equals(10);
+            result.Minute.Should().Equals(1);
+            result.Paid.Should().Equals(0);
             this._httpTest.ShouldHaveCalled(NifClient.BaseAddress)
                 .WithVerb(HttpMethod.Get)
                 .WithQueryParamValue("json", 1)
