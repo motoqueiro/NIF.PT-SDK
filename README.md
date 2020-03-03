@@ -1,6 +1,6 @@
 # NIF.PT-SDK
 
-[https://ci.appveyor.com/api/projects/status/q45i21tsk53t160e?svg=true](https://ci.appveyor.com/api/projects/status/q45i21tsk53t160e?svg=true)
+[![Build status](https://ci.appveyor.com/api/projects/status/q45i21tsk53t160e?svg=true)](https://ci.appveyor.com/project/motoqueiro/nif-pt-sdk)
 
 .Net client for the [NIF.PT](http://www.nif.pt/) webservice where you can search and validate the portuguese national identification number (NIF) or the portuguese national colective person identification number (NIPC).
 
