@@ -41,6 +41,9 @@ build:
   include_nuget_references: false
   verbosity: minimal
 
+before_build:
+  - nuget restore
+
 test:
   assemblies:
     - '**\*.UnitTests.dll'
