@@ -11,7 +11,7 @@
 
     public class NifClient
     {
-        public const string BaseAddress = "http://www.nif.pt";
+        public const string BaseAddress = "http://www.nif.pt/";
 
         public string Key { get; private set; }
 
@@ -21,7 +21,6 @@
             {
                 var settings = new JsonSerializerSettings();
                 settings.Converters.Add(new RecordJsonConverter());
-                settings.Converters.Add(new CreditVerificationJsonConverter());
                 gfhs.JsonSerializer = new NewtonsoftJsonSerializer(settings);
             });
         }
@@ -45,27 +44,29 @@
         /// </summary>
         /// <param name="nif"></param>
         /// <returns></returns>
-        public async Task<Search> Search(string nif)
-        {
-            return await BaseAddress
-                .SetQueryParam("json", 1)
-                .SetQueryParam("q", nif)
-                .SetQueryParam("key", this.Key)
-                .GetJsonAsync<Search>();
-        }
+        public async Task<SearchResponse> Search(string nif) => await BaseAddress
+            .SetQueryParam("json", 1)
+            .SetQueryParam("q", nif)
+            .SetQueryParam("key", this.Key)
+            .GetJsonAsync<SearchResponse>();
 
         /// <summary>
         /// Se ultrapassar os limites de utilização gratuita, poderá carregar a sua conta com créditos. Usando um pedido como exemplo abaixo, obterá os dados para pagamento, que poderá usar em qualquer caixa multibanco ou no seu homebanking. Os parâmetros invoice_name e invoice_nif não são obrigatórios (nestes casos, a fatura será emitida a "Consumidor Final"), mas se invoice_nif for enviado, tem de ser um NIF válido.
         /// </summary>
-        /// <param name="creditsAmount"></param>
-        /// <param name="invoiceName"></param>
-        /// <param name="invoiceNif"></param>
+        /// <param name="creditsAmount">Número de créditos a comprar</param>
+        /// <param name="invoiceName">Nome para faturação</param>
+        /// <param name="invoiceNif">NIF para faturação</param>
         /// <returns></returns>
-        public async Task<CreditPurchase> BuyCredits(
-            int creditsAmount,
+        public async Task<CreditPurchaseResponse> BuyCredits(
+            uint creditsAmount,
             string invoiceName = null,
             string invoiceNif = null)
         {
+            if (creditsAmount == 0)
+            {
+                throw new ArgumentException("The number of credits to buy cannot be zero!", nameof(creditsAmount));
+            }
+
             var url = BaseAddress
                 .SetQueryParam("json", 1)
                 .SetQueryParam("buy", creditsAmount)
@@ -80,20 +81,17 @@
                 url.SetQueryParam("invoice_nif", invoiceNif);
             }
 
-            return await url.GetJsonAsync<CreditPurchase>();
+            return await url.GetJsonAsync<CreditPurchaseResponse>();
         }
 
         /// <summary>
         /// Para saber quantos créditos já gastou, sejam eles gratuitos ou pagos.
         /// </summary>
         /// <returns></returns>
-        public async Task<CreditVerification> VerifyCredits()
-        {
-            return await BaseAddress
-                .SetQueryParam("json", 1)
-                .SetQueryParam("credits", 1)
-                .SetQueryParam("key", this.Key)
-                .GetJsonAsync<CreditVerification>();
-        }
+        public async Task<CreditVerificationResponse> VerifyCredits() => await BaseAddress
+            .SetQueryParam("json", 1)
+            .SetQueryParam("credits", 1)
+            .SetQueryParam("key", this.Key)
+            .GetJsonAsync<CreditVerificationResponse>();
     }
 }

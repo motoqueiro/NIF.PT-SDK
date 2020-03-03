@@ -9,10 +9,7 @@
     public class RecordJsonConverter
         : JsonConverter
     {
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(Record);
-        }
+        public override bool CanConvert(Type objectType) => objectType == typeof(Record);
 
         public override bool CanWrite => false;
 
@@ -28,9 +25,6 @@
             return recordsToken.First.First.ToObject<Record>();
         }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            throw new NotImplementedException();
-        }
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) => throw new NotImplementedException();
     }
 }

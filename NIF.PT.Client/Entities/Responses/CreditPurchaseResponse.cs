@@ -2,7 +2,7 @@
 {
     using Newtonsoft.Json;
 
-    public class CreditPurchase
+    public class CreditPurchaseResponse
     {
         [JsonProperty("credits")]
         public int Credits { get; set; }

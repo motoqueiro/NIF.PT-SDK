@@ -14,7 +14,10 @@
         : IDisposable
     {
         private readonly HttpTest _httpTest;
+
         private readonly Fixture _fixture;
+
+        private const string ExpectedUrlPattern = NifClient.BaseAddress + "*";
 
         public NifClientUnitTests()
         {
@@ -66,49 +69,50 @@
 
             //Assert
             result.Should().NotBeNull();
-            result.Result.Should().Equals("success");
+            result.Result.Should().Be("success");
             result.Record.Should().NotBeNull();
-            result.Record.Nif.Should().Equals(509442013);
-            result.Record.SeoUrl.Should().Equals("nexperience-lda");
-            result.Record.Title.Should().Equals("Nexperience Lda");
-            result.Record.Address.Should().Equals("Rua da Lionesa Nº 446, Edifício G20");
-            result.Record.Pc4.Should().Equals("4465");
-            result.Record.Pc3.Should().Equals("671");
-            result.Record.City.Should().Equals("Leça do Balio");
-            result.Record.Activity.Should().Equals("Desenvolvimento de software. Consultoria em informática. Comércio de equipamentos e sistemas informáticos. Exploração de portais web.");
-            result.Record.Status.Should().Equals("active");
-            result.Record.Cae.Should().Equals("62010");
+            result.Record.Nif.Should().Be(509442013);
+            result.Record.SeoUrl.Should().Be("nexperience-lda");
+            result.Record.Title.Should().Be("Nexperience Lda");
+            result.Record.Address.Should().Be("Rua da Lionesa Nº 446, Edifício G20");
+            result.Record.Pc4.Should().Be("4465");
+            result.Record.Pc3.Should().Be("671");
+            result.Record.City.Should().Be("Leça do Balio");
+            result.Record.Activity.Should().Be("Desenvolvimento de software. Consultoria em informática. Comércio de equipamentos e sistemas informáticos. Exploração de portais web.");
+            result.Record.Status.Should().Be("active");
+            result.Record.Cae.Should().Be("62010");
             result.Record.Contacts.Should().NotBeNull();
-            result.Record.Contacts.Email.Should().Equals("info@nex.pt");
-            result.Record.Contacts.Phone.Should().Equals("220198228");
-            result.Record.Contacts.Website.Should().Equals("www.nex.pt");
-            result.Record.Contacts.Fax.Should().Equals("224 905 459");
+            result.Record.Contacts.Email.Should().Be("info@nex.pt");
+            result.Record.Contacts.Phone.Should().Be("220198228");
+            result.Record.Contacts.Website.Should().Be("www.nex.pt");
+            result.Record.Contacts.Fax.Should().Be("224 905 459");
             result.Record.Structure.Should().NotBeNull();
-            result.Record.Structure.Nature.Should().Equals("LDA");
-            result.Record.Structure.Capital.Should().Equals("5000.00");
-            result.Record.Structure.CapitalCurrency.Should().Equals("EUR");
+            result.Record.Structure.Nature.Should().Be("LDA");
+            result.Record.Structure.Capital.Should().Be("5000.00");
+            result.Record.Structure.CapitalCurrency.Should().Be("EUR");
             result.Record.Geo.Should().NotBeNull();
-            result.Record.Geo.Region.Should().Equals("Porto");
-            result.Record.Geo.County.Should().Equals("Matosinhos");
-            result.Record.Geo.Parish.Should().Equals("Leça do Balio");
+            result.Record.Geo.Region.Should().Be("Porto");
+            result.Record.Geo.County.Should().Be("Matosinhos");
+            result.Record.Geo.Parish.Should().Be("Leça do Balio");
             result.Record.Place.Should().NotBeNull();
-            result.Record.Place.Address.Should().Equals("Rua da Lionesa Nº 446, Edifício G20");
-            result.Record.Place.Pc4.Should().Equals("4465");
-            result.Record.Place.Pc3.Should().Equals("671");
-            result.Record.Place.City.Should().Equals("Leça do Balio");
-            result.Record.Racius.Should().Equals("http://www.racius.com/nexperience-lda/");
-            result.Record.Alias.Should().Equals("Nex - Nexperience, Lda");
-            result.Record.Portugalio.Should().Equals("http://www.portugalio.com/nex/");
-            result.NifValidation.Should().Equals(true);
-            result.IsNif.Should().Equals(true);
+            result.Record.Place.Address.Should().Be("Rua da Lionesa Nº 446, Edifício G20");
+            result.Record.Place.Pc4.Should().Be("4465");
+            result.Record.Place.Pc3.Should().Be("671");
+            result.Record.Place.City.Should().Be("Leça do Balio");
+            result.Record.Racius.Should().Be("http://www.racius.com/nexperience-lda/");
+            result.Record.Alias.Should().Be("Nex - Nexperience, Lda");
+            result.Record.Portugalio.Should().Be("http://www.portugalio.com/nex/");
+            result.NifValidation.Should().Be(true);
+            result.IsNif.Should().Be(true);
             result.Credits.Should().NotBeNull();
-            result.Credits.Used.Should().Equals("free");
+            result.Credits.Used.Should().Be("free");
             result.Credits.Left.Should().BeEmpty();
-            this._httpTest.ShouldHaveCalled(NifClient.BaseAddress)
+            this._httpTest.ShouldHaveCalled(ExpectedUrlPattern)
                 .WithVerb(HttpMethod.Get)
                 .WithQueryParamValue("json", 1)
                 .WithQueryParamValue("q", nif)
-                .WithQueryParamValue("key", key);
+                .WithQueryParamValue("key", key)
+                .Times(1);
         }
 
         [Fact]
@@ -117,7 +121,7 @@
         {
             //Arrange
             var client = GenerateClient(out string key);
-            var creditsAmount = this._fixture.Generate<int>();
+            var creditsAmount = this._fixture.Generate<uint>();
             var invoiceName = this._fixture.Generate<string>();
             var invoiceNif = this._fixture.Generate<string>();
             await LoadResponseBody("BuyCreditsResponseBody");
@@ -130,17 +134,18 @@
 
             //Assert
             result.Should().NotBeNull();
-            result.Credits.Should().Equals(1000);
-            result.AtmReference.Entity.Equals("10241");
-            result.AtmReference.Reference.Equals("000 000 000");
-            result.AtmReference.Amount.Equals("10.00");
-            this._httpTest.ShouldHaveCalled(NifClient.BaseAddress)
+            result.Credits.Should().Be(1000);
+            result.AtmReference.Entity.Should().Be("10241");
+            result.AtmReference.Reference.Should().Be("000 000 000");
+            result.AtmReference.Amount.Should().Be("10.00");
+            this._httpTest.ShouldHaveCalled(ExpectedUrlPattern)
                 .WithVerb(HttpMethod.Get)
                 .WithQueryParamValue("json", 1)
                 .WithQueryParamValue("buy", creditsAmount)
                 .WithQueryParamValue("invoice_name", invoiceName)
                 .WithQueryParamValue("invoice_nif", invoiceNif)
-                .WithQueryParamValue("key", key);
+                .WithQueryParamValue("key", key)
+                .Times(1);
         }
 
         [Fact]
@@ -149,7 +154,7 @@
         {
             //Arrange
             var client = GenerateClient(out string key);
-            var creditsAmount = this._fixture.Generate<int>();
+            var creditsAmount = this._fixture.Generate<uint>();
             await LoadResponseBody("BuyCreditsResponseBody");
 
             //Act
@@ -157,15 +162,16 @@
 
             //Assert
             result.Should().NotBeNull();
-            result.Credits.Should().Equals(1000);
-            result.AtmReference.Entity.Equals("10241");
-            result.AtmReference.Reference.Equals("000 000 000");
-            result.AtmReference.Amount.Equals("10.00");
-            this._httpTest.ShouldHaveCalled(NifClient.BaseAddress)
+            result.Credits.Should().Be(1000);
+            result.AtmReference.Entity.Should().Be("10241");
+            result.AtmReference.Reference.Should().Be("000 000 000");
+            result.AtmReference.Amount.Should().Be("10.00");
+            this._httpTest.ShouldHaveCalled(ExpectedUrlPattern)
                 .WithVerb(HttpMethod.Get)
                 .WithQueryParamValue("json", 1)
                 .WithQueryParamValue("buy", creditsAmount)
-                .WithQueryParamValue("key", key);
+                .WithQueryParamValue("key", key)
+                .Times(1);
         }
 
         [Fact]
@@ -181,22 +187,21 @@
 
             //Assert
             result.Should().NotBeNull();
-            result.Month.Should().Equals(1000);
-            result.Day.Should().Equals(100);
-            result.Hour.Should().Equals(10);
-            result.Minute.Should().Equals(1);
-            result.Paid.Should().Equals(0);
-            this._httpTest.ShouldHaveCalled(NifClient.BaseAddress)
+            result.Credits.Should().NotBeNull();
+            result.Credits.Month.Should().Be(1000);
+            result.Credits.Day.Should().Be(100);
+            result.Credits.Hour.Should().Be(10);
+            result.Credits.Minute.Should().Be(1);
+            result.Credits.Paid.Should().Be(0);
+            this._httpTest.ShouldHaveCalled(ExpectedUrlPattern)
                 .WithVerb(HttpMethod.Get)
                 .WithQueryParamValue("json", 1)
                 .WithQueryParamValue("credits", 1)
-                .WithQueryParamValue("key", key);
+                .WithQueryParamValue("key", key)
+                .Times(1);
         }
 
-        public void Dispose()
-        {
-            this._httpTest.Dispose();
-        }
+        public void Dispose() => this._httpTest.Dispose();
 
         private NifClient GenerateClient(out string key)
         {

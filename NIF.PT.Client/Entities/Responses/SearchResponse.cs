@@ -3,7 +3,7 @@
     using Newtonsoft.Json;
     using NIF.PT.Client.Converters;
 
-    public partial class Search
+    public class SearchResponse
     {
         [JsonProperty("result")]
         public string Result { get; set; }

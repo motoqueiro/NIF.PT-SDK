@@ -36,16 +36,16 @@ namespace NIF.PT.Client.IntegrationTests
 
             //Assert
             response.Should().NotBeNull();
-            response.Month.Should().BeGreaterOrEqualTo(0);
-            response.Day.Should().BeGreaterOrEqualTo(0);
-            response.Hour.Should().BeGreaterOrEqualTo(0);
-            response.Minute.Should().BeGreaterOrEqualTo(0);
-            response.Paid.Should().BeGreaterOrEqualTo(0);
+            response.Credits.Month.Should().BeGreaterOrEqualTo(0);
+            response.Credits.Day.Should().BeGreaterOrEqualTo(0);
+            response.Credits.Hour.Should().BeGreaterOrEqualTo(0);
+            response.Credits.Minute.Should().BeGreaterOrEqualTo(0);
+            response.Credits.Paid.Should().BeGreaterOrEqualTo(0);
         }
 
         [Theory]
         [InlineData(1000)]
-        public async Task Integration_BuyCredits(int amount)
+        public async Task Integration_BuyCredits(uint amount)
         {
             //Arrange
             var creditPrice = decimal.Parse(Environment.GetEnvironmentVariable("NIFPT_CREDIT_PRICE"));
