@@ -15,6 +15,9 @@ environment:
   NIFPT_CREDIT_PRICE: 0.01
   NIFPT_ENTITY: 10241
 
+install:
+  - echo NIF PT key: %NIFPT_KEY%
+
 dotnet_csproj:
   patch: true
   file: '**\*.csproj'
