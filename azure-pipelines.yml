@@ -1,8 +1,3 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
 - master
 
@@ -16,23 +11,29 @@ variables:
 
 steps:
 - task: NuGetToolInstaller@1
+  displayName: Install Nuget Tool
 
 - task: NuGetCommand@2
+  displayName: Restore Nuget Packages
   inputs:
     restoreSolution: '$(solution)'
 
 - task: DotNetCoreCLI@2
+  displayName: Build All Projects
   inputs:
     command: 'build'
+    configuration: 'Release'
     projects: '**/*.csproj'
 
 - task: DotNetCoreCLI@2
+  displayName: Run Unit Tests
   inputs:
     command: 'test'
     projects: 'NIF.PT.Client.UnitTests/NIF.PT.Client.UnitTests.csproj'
     testRunTitle: 'Unit Tests'
 
 - task: DotNetCoreCLI@2
+  displayName: Run Integration Tests
   inputs:
     command: 'test'
     projects: 'NIF.PT.Client.IntegrationTests/NIF.PT.Client.IntegrationTests.csproj'
