@@ -3,8 +3,6 @@
     "NIF.PT.Client.IntegrationTests": {
       "commandName": "Project",
       "environmentVariables": {
-        "NIFPT_CREDIT_PRICE": "0.01",
-        "NIFPT_ENTITY": "10241",
         "NIFPT_KEY": "xpto"
       }
     }

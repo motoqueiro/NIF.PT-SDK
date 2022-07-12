@@ -2,7 +2,7 @@
 {
     using Newtonsoft.Json;
 
-    public class ATMReference
+    public class AtmReference
     {
         [JsonProperty("entity")]
         public string Entity { get; set; }

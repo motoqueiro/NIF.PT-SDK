@@ -8,6 +8,9 @@
         [JsonProperty("result")]
         public string Result { get; set; }
 
+        [JsonProperty("message")]
+        public string Message { get; set; }
+
         [JsonProperty("records"), JsonConverter(typeof(RecordJsonConverter))]
         public Record Record { get; set; }
 
