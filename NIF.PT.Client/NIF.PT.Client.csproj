@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Tiago Monteiro</Authors>
     <Company />
-    <PackageProjectUrl></PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/motoqueiro/NIF.PT-SDK</PackageProjectUrl>
     <PackageIcon>logo-fb.png</PackageIcon>
     <PackageIconUrl />
     <RepositoryUrl>https://github.com/motoqueiro/NIF.PT-SDK</RepositoryUrl>
