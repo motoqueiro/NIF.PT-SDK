@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Tiago Monteiro</Authors>
     <Company />
-    <PackageProjectUrl></PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/motoqueiro/NIF.PT-SDK</PackageProjectUrl>
     <PackageIcon>logo-fb.png</PackageIcon>
     <PackageIconUrl />
     <RepositoryUrl>https://github.com/motoqueiro/NIF.PT-SDK</RepositoryUrl>
@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Flurl.Http" Version="2.4.2" />
+    <PackageReference Include="Flurl.Http" Version="3.2.4" />
   </ItemGroup>
 
   <ItemGroup>

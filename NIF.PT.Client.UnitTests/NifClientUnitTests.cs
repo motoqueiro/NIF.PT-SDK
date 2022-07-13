@@ -1,12 +1,12 @@
 ﻿namespace NIF.PT.Client.UnitTests
 {
+    using AutoFixture;
+    using FluentAssertions;
+    using Flurl.Http.Testing;
     using System;
     using System.IO;
     using System.Net.Http;
     using System.Threading.Tasks;
-    using FluentAssertions;
-    using Flurl.Http.Testing;
-    using SimpleFixture;
     using Xunit;
 
     [Trait("Category", "Unit Tests")]
@@ -17,42 +17,15 @@
 
         private readonly Fixture _fixture;
 
+        private readonly NifClient _nifClient;
+
         private const string ExpectedUrlPattern = NifClient.BaseAddress + "*";
 
         public NifClientUnitTests()
         {
             this._httpTest = new HttpTest();
             this._fixture = new Fixture();
-        }
-
-        [Fact]
-        [Trait("Category", "Constructor")]
-        public void Constructor_ValidKey_ShouldBeOk()
-        {
-            //Arrange
-            var key = this._fixture.Generate<string>();
-
-            //Act
-            var client = new NifClient(key);
-
-            //Assert
-            client.Should().NotBeNull();
-            client.Key.Should().BeSameAs(key);
-        }
-
-        [Fact]
-        [Trait("Category", "Constructor")]
-        public void Constructor_InvalidKey_ShouldThrowException()
-        {
-            //Arrange
-            var key = string.Empty;
-
-            //Act
-            var exception = Assert.Throws<ArgumentNullException>(() => new NifClient(key));
-
-            //Assert
-            exception.Should().NotBeNull();
-            exception.Message.Should().Contain(nameof(key));
+            _nifClient = new NifClient(_fixture.Create<string>());
         }
 
         [Fact]
@@ -60,12 +33,11 @@
         public async Task Search_ValidNif_ShouldReturnData()
         {
             //Arrange
-            var client = GenerateClient(out string key);
             var nif = "509442013";
             await LoadResponseBody("SearchResponseBody");
 
             //Act
-            var result = await client.Search(nif);
+            var result = await _nifClient.SearchAsync(nif);
 
             //Assert
             result.Should().NotBeNull();
@@ -109,9 +81,9 @@
             result.Credits.Left.Should().BeEmpty();
             this._httpTest.ShouldHaveCalled(ExpectedUrlPattern)
                 .WithVerb(HttpMethod.Get)
-                .WithQueryParamValue("json", 1)
-                .WithQueryParamValue("q", nif)
-                .WithQueryParamValue("key", key)
+                .WithQueryParam("json", 1)
+                .WithQueryParam("q", nif)
+                .WithAnyQueryParam("key")
                 .Times(1);
         }
 
@@ -120,14 +92,13 @@
         public async Task BuyCredits_AllParameters_ShouldReturnATMReference()
         {
             //Arrange
-            var client = GenerateClient(out string key);
-            var creditsAmount = this._fixture.Generate<uint>();
-            var invoiceName = this._fixture.Generate<string>();
-            var invoiceNif = this._fixture.Generate<string>();
+            var creditsAmount = this._fixture.Create<uint>();
+            var invoiceName = this._fixture.Create<string>();
+            var invoiceNif = this._fixture.Create<string>();
             await LoadResponseBody("BuyCreditsResponseBody");
 
             //Act
-            var result = await client.BuyCredits(
+            var result = await _nifClient.BuyCreditsAsync(
                 creditsAmount,
                 invoiceName,
                 invoiceNif);
@@ -140,12 +111,29 @@
             result.AtmReference.Amount.Should().Be("10.00");
             this._httpTest.ShouldHaveCalled(ExpectedUrlPattern)
                 .WithVerb(HttpMethod.Get)
-                .WithQueryParamValue("json", 1)
-                .WithQueryParamValue("buy", creditsAmount)
-                .WithQueryParamValue("invoice_name", invoiceName)
-                .WithQueryParamValue("invoice_nif", invoiceNif)
-                .WithQueryParamValue("key", key)
+                .WithQueryParam("json", 1)
+                .WithQueryParam("buy", creditsAmount)
+                .WithQueryParam("invoice_name", invoiceName)
+                .WithQueryParam("invoice_nif", invoiceNif)
+                .WithAnyQueryParam("key")
                 .Times(1);
+        }
+
+        [Fact]
+        [Trait("Category", "Buy Credits")]
+        public void NifClient_BuyCredits_ShouldThrowException()
+        {
+            //Arrange
+            var client = new NifClient();
+            var creditsAmount = this._fixture.Create<uint>();
+
+            //Act
+            var act = async () => await client.BuyCreditsAsync(creditsAmount);
+
+            //Assert
+            act.Should().ThrowAsync<ArgumentNullException>()
+                .WithMessage("A chave da API é necessária para compra de créditos!")
+                .WithParameterName("key");
         }
 
         [Fact]
@@ -153,12 +141,11 @@
         public async Task BuyCredits_WithoutInvoiceParameters_ShouldReturnATMReference()
         {
             //Arrange
-            var client = GenerateClient(out string key);
-            var creditsAmount = this._fixture.Generate<uint>();
+            var creditsAmount = this._fixture.Create<uint>();
             await LoadResponseBody("BuyCreditsResponseBody");
 
             //Act
-            var result = await client.BuyCredits(creditsAmount);
+            var result = await _nifClient.BuyCreditsAsync(creditsAmount);
 
             //Assert
             result.Should().NotBeNull();
@@ -168,9 +155,9 @@
             result.AtmReference.Amount.Should().Be("10.00");
             this._httpTest.ShouldHaveCalled(ExpectedUrlPattern)
                 .WithVerb(HttpMethod.Get)
-                .WithQueryParamValue("json", 1)
-                .WithQueryParamValue("buy", creditsAmount)
-                .WithQueryParamValue("key", key)
+                .WithQueryParam("json", 1)
+                .WithQueryParam("buy", creditsAmount)
+                .WithAnyQueryParam("key")
                 .Times(1);
         }
 
@@ -179,11 +166,10 @@
         public async Task VerifyCredits_ShouldReturnInfo()
         {
             //Arrange
-            var client = GenerateClient(out string key);
-            await this.LoadResponseBody("ConsultCreditsResponseBody");
+            await this.LoadResponseBody("VerifyCreditsResponseBody");
 
             //Act
-            var result = await client.VerifyCredits();
+            var result = await _nifClient.VerifyCreditsAsync();
 
             //Assert
             result.Should().NotBeNull();
@@ -195,24 +181,17 @@
             result.Credits.Paid.Should().Be(0);
             this._httpTest.ShouldHaveCalled(ExpectedUrlPattern)
                 .WithVerb(HttpMethod.Get)
-                .WithQueryParamValue("json", 1)
-                .WithQueryParamValue("credits", 1)
-                .WithQueryParamValue("key", key)
+                .WithQueryParam("json", 1)
+                .WithQueryParam("credits", 1)
+                .WithAnyQueryParam("key")
                 .Times(1);
         }
 
         public void Dispose() => this._httpTest.Dispose();
 
-        private NifClient GenerateClient(out string key)
-        {
-            key = this._fixture.Generate<string>();
-            return new NifClient(key);
-        }
-
         private async Task LoadResponseBody(string fileName)
         {
-            var directory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            var filePath = Path.Combine(directory, "ResponseBodies", fileName + ".json");
+            var filePath = Path.Combine("ResponseBodies", fileName + ".json");
             var responseBody = await File.ReadAllTextAsync(filePath);
             this._httpTest.RespondWith(responseBody);
         }

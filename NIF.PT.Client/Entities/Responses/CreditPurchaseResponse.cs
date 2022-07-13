@@ -8,6 +8,6 @@
         public int Credits { get; set; }
 
         [JsonProperty("mb")]
-        public ATMReference AtmReference { get; set; }
+        public AtmReference AtmReference { get; set; }
     }
 }

@@ -1,13 +1,12 @@
 namespace NIF.PT.Client.IntegrationTests
 {
+    using FluentAssertions;
     using System;
     using System.Threading.Tasks;
-    using FluentAssertions;
     using Xunit;
 
     [Trait("Category", "Integration Tests")]
     public class NifClientIntegrationTests
-        : IClassFixture<LaunchSettingsFixture>
     {
         private readonly NifClient _client;
 
@@ -22,7 +21,7 @@ namespace NIF.PT.Client.IntegrationTests
         public async Task Integration_Search(string nif)
         {
             //Act
-            var response = await this._client.Search(nif);
+            var response = await this._client.SearchAsync(nif);
 
             //Assert
             response.Should().NotBeNull();
@@ -32,7 +31,7 @@ namespace NIF.PT.Client.IntegrationTests
         public async Task Integration_VerifyCredits()
         {
             //Act
-            var response = await this._client.VerifyCredits();
+            var response = await this._client.VerifyCreditsAsync();
 
             //Assert
             response.Should().NotBeNull();
@@ -44,23 +43,22 @@ namespace NIF.PT.Client.IntegrationTests
         }
 
         [Theory]
-        [InlineData(1000)]
-        public async Task Integration_BuyCredits(uint amount)
+        [InlineData(1000, 10, "10241")]
+        public async Task Integration_BuyCredits(
+            uint buy,
+            uint expectedAmount,
+            string expectedEntity)
         {
-            //Arrange
-            var creditPrice = decimal.Parse(Environment.GetEnvironmentVariable("NIFPT_CREDIT_PRICE"));
-            var nifPtEntity = Environment.GetEnvironmentVariable("NIFPT_ENTITY");
-
             //Act
-            var response = await this._client.BuyCredits(amount);
+            var response = await this._client.BuyCreditsAsync(buy);
 
             //Assert
             response.Should().NotBeNull();
-            response.Credits.Should().Equals(amount);
+            response.Credits.Should().Equals(buy);
             response.AtmReference.Should().NotBeNull();
-            response.AtmReference.Amount.Should().Equals(creditPrice * amount);
+            response.AtmReference.Amount.Should().Equals(expectedAmount);
             response.AtmReference.Reference.Should().NotBeNullOrEmpty();
-            response.AtmReference.Entity.Should().Equals(nifPtEntity);
+            response.AtmReference.Entity.Should().Equals(expectedEntity);
         }
     }
 }
