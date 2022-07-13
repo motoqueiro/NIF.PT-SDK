@@ -1,12 +1,12 @@
 ﻿namespace NIF.PT.Client.UnitTests
 {
+    using AutoFixture;
+    using FluentAssertions;
+    using Flurl.Http.Testing;
     using System;
     using System.IO;
     using System.Net.Http;
     using System.Threading.Tasks;
-    using FluentAssertions;
-    using Flurl.Http.Testing;
-    using SimpleFixture;
     using Xunit;
 
     [Trait("Category", "Unit Tests")]
@@ -25,7 +25,7 @@
         {
             this._httpTest = new HttpTest();
             this._fixture = new Fixture();
-            _nifClient = new NifClient(_fixture.Generate<string>());
+            _nifClient = new NifClient(_fixture.Create<string>());
         }
 
         [Fact]
@@ -92,9 +92,9 @@
         public async Task BuyCredits_AllParameters_ShouldReturnATMReference()
         {
             //Arrange
-            var creditsAmount = this._fixture.Generate<uint>();
-            var invoiceName = this._fixture.Generate<string>();
-            var invoiceNif = this._fixture.Generate<string>();
+            var creditsAmount = this._fixture.Create<uint>();
+            var invoiceName = this._fixture.Create<string>();
+            var invoiceNif = this._fixture.Create<string>();
             await LoadResponseBody("BuyCreditsResponseBody");
 
             //Act
@@ -125,7 +125,7 @@
         {
             //Arrange
             var client = new NifClient();
-            var creditsAmount = this._fixture.Generate<uint>();
+            var creditsAmount = this._fixture.Create<uint>();
 
             //Act
             var act = async () => await client.BuyCreditsAsync(creditsAmount);
@@ -141,7 +141,7 @@
         public async Task BuyCredits_WithoutInvoiceParameters_ShouldReturnATMReference()
         {
             //Arrange
-            var creditsAmount = this._fixture.Generate<uint>();
+            var creditsAmount = this._fixture.Create<uint>();
             await LoadResponseBody("BuyCreditsResponseBody");
 
             //Act
