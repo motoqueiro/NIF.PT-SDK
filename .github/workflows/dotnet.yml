@@ -1,0 +1,38 @@
+name: .NET
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 6.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build -c Release --no-restore
+
+    - name: Unit Tests
+      run: dotnet test NIF.PT.Client.UnitTests/Nif.PT.Client.UnitTests.csproj --no-build --verbosity normal -c Release
+
+    - name: Integration Test
+      run: dotnet test NIF.PT.Client.IntegrationTests/NIF.PT.Client.IntegrationTests.csproj --no-build --verbosity normal -c Release
+
+    - name: Pack NuGet
+      run: dotnet pack NIF.PT.Client/NIF.PT.Client.csproj --no-build -c Release -o "packages"
+
+    - name: Publish NuGet
+      run: dotnet nuget push "packages/**/*.nupkg" -k ${{ secrets.NUGET_KEY }} -s https://api.nuget.org/v3/index.json
