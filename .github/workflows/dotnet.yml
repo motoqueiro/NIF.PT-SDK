@@ -26,7 +26,7 @@ jobs:
       run: dotnet build -c Release --no-restore
 
     - name: Unit Tests
-      run: dotnet test NIF.PT.Client.UnitTests/Nif.PT.Client.UnitTests.csproj --no-build --verbosity normal -c Release
+      run: dotnet test NIF.PT.Client.UnitTests/NIF.PT.Client.UnitTests.csproj --no-build --verbosity normal -c Release
 
     - name: Integration Test
       run: dotnet test NIF.PT.Client.IntegrationTests/NIF.PT.Client.IntegrationTests.csproj --no-build --verbosity normal -c Release
